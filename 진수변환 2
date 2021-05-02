@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define swap(type,x,y) do{type t=x;x=y;y=t;}while(0)
+
+
+int card_conv(unsigned x,int n, char d[]){
+	char str[]="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	int i=0,j;
+	if(x==0){
+		d[i++]=str[0];
+		printf("%d |\t %d ...  %d\n",n,x,x%n);
+		if(n<10)
+			printf("  +-------\n");
+		else
+			printf("   +------\n");
+	}
+	else{
+		while(x){
+			if(x<10)
+				printf("%d |\t %d ...  %d\n",n,x,x%n);
+			else
+				printf("%d |\t%d ...  %d\n",n,x,x%n);
+			printf("   +------\n");
+			d[i++]=str[x%n]; 
+			x/=n;
+		}
+	}
+	printf("\t %d\n",x);
+	for(j=0;j<i/2;j++){
+		swap(char,d[j],d[i-j-1]);
+	}
+	return i;
+}
+
+
+int main(){
+	unsigned x;
+	int n,i,tr,k;
+	char d[512];
+	printf("10진수를 기수 변환합니다.\n\n");
+	do{
+		printf("변환하는 음이아닌 정수 : ");
+		scanf("%u",&x);
+		do{
+			printf("어떤 진수로 변환할까요?(2~36) : ");
+			scanf("%d",&n);
+		}while(n<2||n>36);
+		k=card_conv(x,n,d);
+		printf("%d진수로 ",n);
+		for(i=0;i<k;i++){
+				printf("%c",d[i]);
+			}
+		printf(" 입니다.");
+		printf("\n\n한 번 더 할까요? (예 : 1 ,아니오 : 2)");
+		scanf("%d",&tr);
+	}while(tr==1);
+}

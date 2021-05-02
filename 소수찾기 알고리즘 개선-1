@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+int main(){
+	int i,j,arr[500],index=0;
+	unsigned long count=0;
+	arr[index++]=2;
+	for(i=3;i<=1000;i+=2){
+		for(j=1;j<index;j++){
+			count++;
+			if(i%arr[j]==0)
+				break;
+		}
+		if(j==index)
+			arr[index++]=i;
+	}
+	for(i=0;i<index;i++){
+		printf("%d ",arr[i]);
+	}
+	printf("\n\n연산 횟수는 %ul 입니다.",count);
+}

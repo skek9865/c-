@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int mdays[][12]={{31,28,31,30,31,30,31,31,30,31,30,31},{31,29,31,30,31,30,31,31,30,31,30,31}};
+
+int isleap(int year){
+	return year%4==0 && year%100!=0 || year%400==0;
+}
+
+int dayofyear(int y,int m, int d){
+	int cnt=0;
+	while(cnt<m-1){
+		d+=mdays[isleap(y)][cnt++];
+	}
+	return d;
+}
+
+int main()
+{
+	int year,month,day,tr;
+	do{
+		printf("년 : ");
+		scanf("%d",&year);
+		printf("월 : ");
+		scanf("%d",&month);
+		printf("일 : ");
+		scanf("%d",&day);
+		printf("%d년의 %d일째 입니다.\n",year,dayofyear(year,month,day));
+		printf("다시 할까요?(1 ...예/0 ... 아니요)\n");
+		scanf("%d",&tr);	
+	}while(tr);
+}

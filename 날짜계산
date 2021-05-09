@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct{
+	int y;
+	int m;
+	int d;
+}Date;
+
+static int arr[2][13]={{31,28,31,30,31,30,31,31,30,31,30,31},{31,29,31,30,31,30,31,31,30,31,30,31}};
+int isleap(int year)
+{
+	return year % 4 == 0 && year % 100!= 0 || year % 400 == 0;
+}
+
+int Print(Date x)
+{
+	int y = x.y;
+	int m = x.m;
+	int d = x.d;
+
+	char * ws[] = { "일", "월" "화" "수", "목", "금", "토" };
+	if (m == 1 || m == 2) {
+		y--;
+		m += 12;
+	}
+	printf("%04d년 %02d월 %02d일(%s)", x.y, x.m, x.d, ws[(y + y / 4 - y / 100 + y / 400 + (13 * m + 8) / 5 + d) % 7]);
+}
+
+Date DateOf(int y,int m,int d){
+	Date dt;
+	dt.y=y;
+	dt.m=m;
+	dt.d=d;
+	
+	return dt;
+}
+
+Date After(Date x, int n){
+	x.d+=n;
+	if(x.d>arr[isleap(x.y)][x.m-1]){
+		if(x.m==12){
+			x.y++;
+			x.m=1;	
+		}
+		else
+			x.m++;	
+		x.d=x.d-arr[isleap(x.y)][x.m-2];
+	}
+	return x;
+}
+
+Date Before(Date x,int n){
+	x.d-=n;
+	if(x.d<1){
+		if(x.m==1){
+			x.y--;
+			x.m=12;
+		}
+		else
+			x.m--;
+		x.d=x.d+arr[isleap(x.y)][x.m-3];
+	}
+	return x;
+}
+
+int main(){
+	Date date;
+	int i,n,y,m,d,tr=1;
+	while(tr==1){
+		printf("년 : ");
+		scanf("%d",&y);
+		printf("월 : ");
+		scanf("%d",&m);
+		printf("일 : ");
+		scanf("%d",&d);
+		printf("몇 일 앞/뒤 날짜를 출력할까요? : "); 
+		scanf("%d",&n);
+		date=DateOf(y,m,d);
+		printf("현재날짜 : %d년 %d월 %d일\n",date.y,date.m,date.d);
+		
+		printf("%d 일 뒤의 날짜 : ", n);
+		Print(After(date, n));
+		printf("\n");
+		printf("%d 일 앞의 날짜 : ", n);
+		Print(Before(date, n));
+		printf("\n"); 
+		
+		printf("계속 할까요 ? (예...1, 아니오...2)");
+		scanf("%d",&tr);
+	}
+	
+}

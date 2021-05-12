@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int search(int arr[],int k,int n){
+	int i;
+	arr[n]=k;
+	for(i=0;i<n;i++){
+		if(arr[i]==k)
+			break;
+	}
+	return i == n ? -1 : i;
+}
+
+int main(){
+	int* arr;
+	int i,n,k,result;
+	printf("몇 개의 수를 입력 받을까요? : ");
+	scanf("%d",&n);
+	arr=malloc(sizeof(int)*(n+1));
+	for(i=0;i<n;i++){
+		printf("%d번째 수 : ",i+1);
+		scanf("%d",&arr[i]);
+	}
+	printf("어떤 수 를 검색할까요? : ");
+	scanf("%d",&k);
+	result=search(arr,k,n);
+	if(result==-1)
+		printf("수 를 찾을수 없습니다.");
+	else
+		printf("%d번째 인덱스에 %d가 있습니다.",result,k);
+	free(arr);
+	return 0;
+}

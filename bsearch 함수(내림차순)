@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+int temp(const int *a,const int *b){
+    return *a < *b ? 1 : *a > *b ? -1 : 0;
+}
+
+int main(){
+    int i,n,k,*p,*result;
+    printf("몇 개의 수 를 받을까요? : ");
+    scanf("%d",&n);
+    p = malloc(sizeof(int)*n);
+    for(i=0;i<n;i++){
+    	printf("%d번째 수 : ",i+1);
+    	scanf("%d",&p[i]);
+	}
+	printf("어떤 수 를 찾을까요? : ");
+	scanf("%d",&k);
+	result=bsearch(&k,p,n,sizeof(int),(int(*)(const void *,const void *))temp);
+	if(result==NULL)
+		printf("찾는 수 가 없습니다.");
+	else
+		printf("%d가 %d번째에 있습니다.",k,(int)(result-p));
+	free(p);
+}

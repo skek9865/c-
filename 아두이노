@@ -1,0 +1,104 @@
+
+// U8g2 라이브러리를 쓰기위한 선언
+#include <U8g2lib.h>
+#include <U8x8lib.h>
+
+
+// 초음파 센서를 사용할 ET-보드 핀번호 설정
+#define echoPin D6  // 초음파 수신부
+#define trigPin D7  // 초음파 송신부 
+// LED 출력 핀번호 설정
+#define RED D2   
+#define YELLOW D5
+#define GREEN D4
+
+// U8g2 초기 설정 값
+U8G2_SSD1306_128X64_NONAME_1_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+
+void setup() {
+  // 초당 통신 속도를 9600비트로 설정
+  Serial.begin(9600);
+  // 초음파 센서 모드설정 : trigPin를 출력모드로 설정, echoPin를 입력모드로 설정
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  // LED 출력 모드 설정 : D2(RED), D4(GREEN), D5(YELLOW)
+  pinMode(RED, OUTPUT);
+  pinMode(GREEN, OUTPUT);
+  pinMode(YELLOW, OUTPUT);
+
+  // OLED 디스플레이 출력 및 인코딩 값을 UTF-8로 설정
+  u8g2.begin();
+  u8g2.enableUTF8Print();
+  
+}
+
+void loop() {
+  // OLED에 출력되는 폰트 설정
+  u8g2.setFont(u8g2_font_maniac_tf);
+  u8g2.setFontDirection(0);
+
+
+  // 값을 저장할 변수선언
+  long duration, distance;
+
+  // 초음파 센서 제어
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  // 물체에 반사되어돌아온 초음파의 시간을 변수에 저장한다.
+  duration = pulseIn (echoPin, HIGH); 
+
+  // 34000*초음파가 물체로 부터 반사되어 돌아오는시간 /1000000 / 2
+  //  (왕복값이아니라 편도값이기때문에 나누기2를 해준다.)
+  // 초음파센서의 거리값이 위 계산값과 동일하게 Cm로 환산되는 계산공식 이다. 수식       이 간단해지도록 적용
+  distance = ((340 * duration) / 10000) / 2; 
+
+  
+  
+  // PC모니터로 초음파 거리값을 확인 하는 코드입니다.
+
+  // 초음파가 반사되어 돌아오는 시간을 보여준다.
+  Serial.println(duration );
+  Serial.print("\nDIstance : ");
+  // 측정된 물체로부터 거리값(cm값)을 보여준다.
+  Serial.print(distance);
+  Serial.println(" Cm");
+
+  // 0.1초마다 측정값을 보여준다.
+  delay(100);
+  u8g2.firstPage();
+  do{
+  // setCursor로 x값과 y값을 설정 후 거리 출력
+    u8g2.setCursor(10, 23);
+    u8g2.print(distance);
+    u8g2.print("cm");
+
+   // 거리 값을 이용해 3단계로 나누어 상황에 맞게 출력
+      if(distance >= 100){
+        digitalWrite(YELLOW,LOW);
+        digitalWrite(RED,LOW);
+        digitalWrite(GREEN,HIGH);
+        u8g2.setCursor(0, 50);
+        u8g2.print("SAFE");
+      }
+      else if(distance >= 50){
+        digitalWrite(RED,LOW);
+        digitalWrite(YELLOW,HIGH);
+        digitalWrite(GREEN,LOW);
+        u8g2.setCursor(0, 50);
+        u8g2.print("WARN");
+      }
+  
+      
+      else{
+        digitalWrite(GREEN,LOW);
+        digitalWrite(YELLOW,LOW);
+        digitalWrite(RED,HIGH);
+        u8g2.setCursor(0, 50);
+        u8g2.print("DANGER");
+      }
+  }while(u8g2.nextPage());
+}

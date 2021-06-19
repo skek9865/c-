@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define swap(type,x,y) do {type t=x; x=y; y=t;}while(0)
+
+void shaker(int arr[],int n){
+    int j,left=0;
+    int right=n-1;
+    int last=right;
+
+    while(left<right){
+        for(j=right;j>left;j--){
+            if(arr[j-1] > arr[j]){
+                swap(int,arr[j-1],arr[j]);
+                last=j;
+            }
+        }
+        left = last;
+
+        for(j=left;j<right;j++){
+            if(arr[j]>arr[j+1]){
+                swap(int,arr[j],arr[j+1]);
+                last=j;
+            }
+        }
+
+        right = last;
+    }
+}
+
+int main(void){
+    int i,n,*x;
+    printf("몇 개의 수 를 받을까요 : ");
+    scanf("%d",&n);
+    x= malloc(sizeof(int) * n);
+    for(i=0;i<n;i++){
+        printf("%d번째 수 를 입력하시오 : ",i+1);
+        scanf("%d",&x[i]);
+    }
+
+    shaker(x,n);
+
+    printf("정렬 완료 \n\n");
+    for(i=0;i<n;i++){
+        printf("%d ",x[i]);
+    }
+}

@@ -1,0 +1,144 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define swap(type,x,y) do {type t=x; x=y; y=t;}while(0)
+
+typedef struct {
+    int max;
+    int ptr;
+    int *stk;
+}IntStack;
+
+int Initialize(IntStack *s, int max){
+    s->ptr=0;
+
+    if ((s->stk = calloc(max, sizeof(int))) == NULL) {
+        s->max = 0;
+        return -1;
+    }
+    s->max=max;
+}
+
+int Push(IntStack *s, int x){
+    if(s->max<=s->ptr)
+        return -1;
+    s->stk[s->ptr++] = x;
+    return 0;
+}
+
+int Pop(IntStack *s, int *x){
+    if(s->ptr<=0)
+        return -1;
+    *x = s->stk[--s->ptr];
+    return 0;
+}
+
+int Peek(const IntStack *s, int *x){
+    if(s->ptr<=0)
+        return -1;
+    *x = s->stk[s->ptr-1];
+}
+
+void Clear(IntStack *s){
+    s->ptr=0;
+}
+
+int Capacity(const IntStack *s){
+    return s->max;
+}
+
+int Size(const IntStack *s){
+    return s->ptr;
+}
+
+int IsEmpty(const IntStack *s){
+    return s->ptr<=0;
+}
+
+int IsFull(const IntStack *s){
+    return s->ptr>=s->max;
+}
+
+int Search(const IntStack *s, int x){
+    int i;
+    for(i=s->ptr-1;i>=0;i--){
+        if(s->stk[i]==x)
+            return i;
+    }
+    return -1;
+}
+
+void Print(const IntStack *s){
+    int i;
+    for(i=0;i<s->ptr;i++){
+        printf("%d ",s->stk[i]);
+    }
+}
+
+void Terminate(IntStack *s){
+    if (s->stk != NULL)
+        free(s->stk);
+    s->max = s->ptr = 0;
+}
+
+void quick(int arr[], int left, int right) {
+
+    IntStack lstack;
+    IntStack rstack;
+
+    Initialize(&lstack, right - left + 1);
+    Initialize(&rstack, right - left + 1);
+
+    Push(&lstack, left);
+    Push(&rstack, right);
+
+    while (!IsEmpty(&lstack)) {
+        int pl = (Pop(&lstack, &left), left);
+        int pr = (Pop(&rstack, &right), right);
+        int x = arr[(left + right) / 2];
+        
+        do {
+            while (arr[pl] < x) pl++;
+            while (arr[pr] > x) pr--;
+            if (pl <= pr) {
+                swap(int, arr[pl], arr[pr]);
+                pl++;
+                pr--;
+            }
+        } while (pl <= pr);
+
+        if (pr - left < right - pl) {
+            swap(int, pl, left);
+            swap(int, pr, right);
+        }
+        if (left < pr) {
+            Push(&lstack, left);
+            Push(&rstack, pr);
+        }
+        if (pl < right) {
+            Push(&lstack, pl);
+            Push(&rstack, right);
+        }
+    }
+}
+
+int main(void){
+    int i,n,*x;
+    printf("몇 개의 수 를 받을까요 : ");
+    scanf("%d",&n);
+    x= malloc(sizeof(int) * n);
+    for(i=0;i<n;i++){
+        printf("%d번째 수 를 입력하시오 : ",i+1);
+        scanf("%d",&x[i]);
+    }
+
+    quick(x,0,n-1);
+
+    printf("정렬 완료 \n\n");
+    for(i=0;i<n;i++){
+        printf("%d ",x[i]);
+    }
+
+    free(x);
+    return 0;
+}

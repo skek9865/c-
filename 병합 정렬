@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+//#define swap(type,x,y) do {type t=x; x=y; y=t;}while(0)
+
+static int *buff;
+
+static void __mergesort(int arr[], int left, int right){
+    if(left < right){
+        int center =(left + right)/2;
+        int p =0;
+        int i;
+        int j = 0;
+        int k = left;
+        __mergesort(arr,left,center);
+        __mergesort(arr,center + 1,right);
+        for(i = left; i <= center; i++)
+            buff[p++] = arr[i];
+        while(i <= right && j < p)
+            arr[k++] = (buff[j] <= arr[i]) ? buff[j++] : arr[i++];
+        while(j < p)
+            arr[k++] = buff[j++];
+    }
+}
+
+int mergesort (int arr[], int n){
+    if((buff = malloc(sizeof(int)*n)) == NULL)
+        return -1;
+    __mergesort(arr,0,n-1);
+    free(buff);
+    return 0;
+}
+
+
+int main(void){
+    int i,n;
+    int *x;
+    printf("배열 요소 갯수 : ");
+    scanf("%d",&n);
+    x= malloc(sizeof(int) * n);
+    printf("배열 입력\n");
+    for(i=0;i<n;i++){
+        printf("%d번째 수 를 입력하시오 : ",i+1);
+        scanf("%d",&x[i]);
+    }
+
+    mergesort(x,n);
+
+    printf("정렬 완료 \n\n");
+    for(i=0;i<n;i++){
+        printf("%d ",x[i]);
+    }
+
+    free(x);
+    return 0;
+}
